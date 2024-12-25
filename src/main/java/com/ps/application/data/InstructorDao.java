@@ -1,4 +1,4 @@
 package com.ps.application.data;
 
-public interface InstructorsDao {
+public interface InstructorDao {
 }
