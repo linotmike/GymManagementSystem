@@ -28,6 +28,8 @@ public class AppUser implements UserDetails {
         this.roles = roles;
     }
 
+
+
     public int getUserId() {
         return userId;
     }
