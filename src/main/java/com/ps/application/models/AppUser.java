@@ -6,22 +6,21 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
-public class User implements UserDetails {
+public class AppUser implements UserDetails {
     private int userId;
     private String username;
     private String email;
     private String password;
-    private Roles roles;
     public enum Roles {
         Admin,Member,Guest
     }
+    private Roles roles;
 
-    public User() {
+    public AppUser() {
     }
 
-    public User(int userId, String username, String email, String password, Roles roles) {
+    public AppUser(int userId, String username, String email, String password, Roles roles) {
         this.userId = userId;
         this.username = username;
         this.email = email;

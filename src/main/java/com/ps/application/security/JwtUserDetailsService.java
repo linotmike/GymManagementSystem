@@ -1,6 +1,7 @@
 package com.ps.application.security;
 
 import com.ps.application.data.UserDao;
+import com.ps.application.models.AppUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,10 +20,10 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userDao.getByUserName(username);
-        if(user == null){
+        AppUser appUser = userDao.getByUsername(username);
+        if(appUser == null){
             throw new UsernameNotFoundException("user not found with the username: " + username);
         }
-        return new org.springframework.security.core.userdetails.User(user.getUsername(),user.getPassword(),user.getAuthorities());
+        return new org.springframework.security.core.userdetails.User(appUser.getUsername(),appUser.getPassword(),appUser.getAuthorities());
     }
 }
