@@ -10,6 +10,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class MySqlUserDao extends MySqlBaseDao implements UserDao {
@@ -24,12 +26,12 @@ public class MySqlUserDao extends MySqlBaseDao implements UserDao {
         try (
                 Connection connection = getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
-                ) {
-            preparedStatement.setString(1,username);
-            try(
+        ) {
+            preparedStatement.setString(1, username);
+            try (
                     ResultSet resultSet = preparedStatement.executeQuery();
-                    ){
-                if(resultSet.next()){
+            ) {
+                if (resultSet.next()) {
                     return mapUser(resultSet);
                 }
 
@@ -40,14 +42,33 @@ public class MySqlUserDao extends MySqlBaseDao implements UserDao {
         return null;
     }
 
-    public AppUser mapUser (ResultSet resultSet) throws SQLException {
+    @Override
+    public List<AppUser> getAllUsers() {
+        String query = "SELECT * FROM users";
+        List<AppUser> users = new ArrayList<>();
+        try (
+                Connection connection = getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                ) {
+            while (resultSet.next()){
+                AppUser appUser = mapUser(resultSet);
+                users.add(appUser);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return users;
+    }
+
+    public AppUser mapUser(ResultSet resultSet) throws SQLException {
         int userId = resultSet.getInt("user_id");
         String username = resultSet.getString("username");
         String email = resultSet.getString("email");
         String password = resultSet.getString("password");
         AppUser.Roles roles = AppUser.Roles.valueOf(resultSet.getString("role").toUpperCase());
 
-        return new AppUser(userId,username, email,password,roles);
+        return new AppUser(userId, username, email, password, roles);
 
     }
 }
