@@ -12,9 +12,8 @@ public class AppUser implements UserDetails {
     private String username;
     private String email;
     private String password;
-    public enum Roles {
-        Admin,Member,Guest
-    }
+
+
     private Roles roles;
 
     public AppUser() {
@@ -27,7 +26,19 @@ public class AppUser implements UserDetails {
         this.password = password;
         this.roles = roles;
     }
+    public enum Roles {
+        Admin, Member, Guest;
 
+        public static Roles getRole(String roleStr) {
+            for (Roles role : Roles.values()) {
+                if (role.name().equalsIgnoreCase(roleStr)) {
+                    return role;
+                }
+            }
+            throw new IllegalArgumentException("No constant with text " + roleStr + " found");
+
+        }
+    }
 
 
     public int getUserId() {

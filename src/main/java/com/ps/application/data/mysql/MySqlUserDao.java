@@ -66,7 +66,7 @@ public class MySqlUserDao extends MySqlBaseDao implements UserDao {
         String username = resultSet.getString("username");
         String email = resultSet.getString("email");
         String password = resultSet.getString("password");
-        AppUser.Roles roles = AppUser.Roles.valueOf(resultSet.getString("role").toUpperCase());
+        AppUser.Roles roles = AppUser.Roles.getRole(resultSet.getString("role").toUpperCase());
 
         return new AppUser(userId, username, email, password, roles);
 

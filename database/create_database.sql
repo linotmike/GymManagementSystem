@@ -176,10 +176,10 @@ CREATE INDEX idx_day_of_week ON schedules (day_of_week);
 -- Insert data into `users`
 INSERT INTO users (username, email, password, role)
 VALUES
-    ('alice', 'alice@example.com', 'hashed_password', 'member'),
-    ('bob', 'bob@example.com', 'hashed_password', 'admin'),
-    ('charlie', 'charlie@example.com', 'hashed_password', 'guest'),
-    ('diana', 'diana@example.com', 'hashed_password', 'member');
+    ('alice', 'alice@example.com', '$2a$10$NkufUPF3V8dEPSZeo1fzHe9ScBu.LOay9S3N32M84yuUM2OJYEJ/.', 'MEMBER'),
+    ('lino', 'bob@example.com', '$2a$10$lfQi9jSfhZZhfS6/Kyzv3u3418IgnWXWDQDk7IbcwlCFPgxg9Iud2', 'ADMIN'),
+    ('charlie', 'charlie@example.com', '$2a$10$NkufUPF3V8dEPSZeo1fzHe9ScBu.LOay9S3N32M84yuUM2OJYEJ/.', 'GUEST'),
+    ('diana', 'diana@example.com', '$2a$10$lfQi9jSfhZZhfS6/Kyzv3u3418IgnWXWDQDk7IbcwlCFPgxg9Iud2', 'MEMBER');
 
 -- Insert data into `members`
 INSERT INTO members (user_id, membership_type, start_date, status)
