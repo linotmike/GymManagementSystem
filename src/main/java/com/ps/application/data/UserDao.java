@@ -7,4 +7,5 @@ import java.util.List;
 public interface UserDao {
     AppUser getByUsername (String username);
     List<AppUser> getAllUsers();
+    AppUser createUser (AppUser user);
 }

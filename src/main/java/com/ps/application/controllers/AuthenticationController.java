@@ -1,7 +1,9 @@
 package com.ps.application.controllers;
 
+import com.ps.application.data.ProfileDao;
 import com.ps.application.data.UserDao;
 import com.ps.application.models.AppUser;
+import com.ps.application.models.Profile;
 import com.ps.application.security.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -16,16 +18,21 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthenticationController {
-    @Autowired
+
     private UserDao userDao;
-    @Autowired
+    private ProfileDao profileDao;
+
     private AuthenticationManager authenticationManager;
-    @Autowired
+
     private JwtTokenUtil jwtTokenUtil;
 
 
-    public AuthenticationController (UserDao userDao){
+@Autowired
+    public AuthenticationController (UserDao userDao,ProfileDao profileDao,AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil){
         this.userDao = userDao;
+        this.profileDao = profileDao;
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenUtil = jwtTokenUtil;
     }
 
 
@@ -41,6 +48,11 @@ public class AuthenticationController {
         }catch (Exception e){
             return ResponseEntity.badRequest().body("login failed: " + e.getMessage());
         }
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<Profile> createProfile (@RequestBody Profile profile){
+
     }
 
 

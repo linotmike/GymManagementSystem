@@ -6,10 +6,7 @@ import org.springframework.stereotype.Component;
 import com.ps.application.models.AppUser;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,8 +47,8 @@ public class MySqlUserDao extends MySqlBaseDao implements UserDao {
                 Connection connection = getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
                 ResultSet resultSet = preparedStatement.executeQuery();
-                ) {
-            while (resultSet.next()){
+        ) {
+            while (resultSet.next()) {
                 AppUser appUser = mapUser(resultSet);
                 users.add(appUser);
             }
@@ -59,6 +56,41 @@ public class MySqlUserDao extends MySqlBaseDao implements UserDao {
             e.printStackTrace();
         }
         return users;
+    }
+
+    @Override
+    public AppUser createUser(AppUser user) {
+        String query = "INSERT INTO users (username,email,password,role) VALUES(?,?,?,?)";
+        try (
+                Connection connection = getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+        ) {
+            preparedStatement.setString(1, user.getUsername());
+            preparedStatement.setString(2, user.getEmail());
+            preparedStatement.setString(3, user.getPassword());
+            preparedStatement.setString(4, user.getRoles().toString());
+//            AppUser.Roles roles = AppUser.Roles.valueOf(preparedStatement.setString(4,user.getRoles().toString()));
+            int rowsAdded = preparedStatement.executeUpdate();
+            if (rowsAdded > 0) {
+                System.out.println("Rows added " + rowsAdded);
+            } else {
+                System.out.println("No rows added");
+            }
+
+            try (ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
+                if (resultSet.next()) {
+                    user.setUserId(resultSet.getInt(1));
+                } else {
+                    throw new SQLException("Creating user failed");
+                }
+            }
+            return user;
+        } catch (SQLException e) {
+            System.out.println("Error creating user " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+
     }
 
     public AppUser mapUser(ResultSet resultSet) throws SQLException {
