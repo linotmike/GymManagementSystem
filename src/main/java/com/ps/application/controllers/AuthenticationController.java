@@ -62,98 +62,49 @@ public class AuthenticationController {
         }
     }
 
-//    @PostMapping("/signup")
-//    public ResponseEntity<?> signUp(@RequestBody SignupRequest signupRequest) {
-//        AppUser appUser = signupRequest.getUser();
-//        Profile profile = signupRequest.getProfile();
-//
-//        if (appUser.getUsername() == null || appUser.getEmail() == null || appUser.getPassword() == null) {
-//            return ResponseEntity.badRequest().body("Missing information");
-//        }
-//        try {
-//            appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
-//            AppUser newUser = userDao.createUser(appUser);
-//            if (newUser == null) {
-//                return ResponseEntity.badRequest().body("User could not be created");
-//            }
-//            profile.setUserId(newUser.getUserId());
-//            Profile createdProfile = profileDao.createProfile(profile);
-//            if (createdProfile == null) {
-//                return ResponseEntity.badRequest().body("Profile could not be created");
-//            }
-//            final String token = jwtTokenUtil.generateToken(newUser);
-//            return ResponseEntity.ok(new AuthResponse(newUser, token));
-//
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured while signing up " + e.getMessage());
-//        }
-//
-////        try{
-////
-////            Profile profile = new Profile();
-////             profile.setUserId(newUser.getUserId());
-////             profile.setBio(newUser.getBio());
-////
-////            final String token = jwtTokenUtil.generateToken(newUser);
-//////            return ResponseEntity.ok(new AuthResponse(newUser,token));
-////
-////        }catch (Exception e){
-////            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred during signing up " + e.getMessage());
-////        }
-//    }
-@PostMapping("/signup")
-public ResponseEntity<?> signUp(@RequestBody SignupRequest signupRequest) {
-    if (signupRequest == null) {
-        return ResponseEntity.badRequest().body("No signup request data provided");
-    }
+    @PostMapping("/signup")
+    public ResponseEntity<?> signUp(@RequestBody SignupRequest signupRequest) {
+        AppUser appUser = signupRequest.getUser();
+        Profile profile = signupRequest.getProfile();
 
-    AppUser appUser = signupRequest.getUser();
-    Profile profile = signupRequest.getProfile();
-
-    // Check if the AppUser object is not null
-    if (appUser == null) {
-        return ResponseEntity.badRequest().body("Signup details are incomplete.");
-    }
-
-    // Check required user fields
-    if (appUser.getUsername() == null || appUser.getEmail() == null || appUser.getPassword() == null) {
-        return ResponseEntity.badRequest().body("Missing information");
-    }
-
-    // Encrypt the user's password
-    appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
-
-    // Create the user
-    AppUser newUser = userDao.createUser(appUser);
-    if (newUser == null) {
-        return ResponseEntity.badRequest().body("User could not be created");
-    }
-
-    // Check if profile data is included and create profile
-    if (profile != null) {
-        profile.setUserId(newUser.getUserId());  // Associate the profile with the newly created user
-        Profile createdProfile = profileDao.createProfile(profile);
-        if (createdProfile == null) {
-            return ResponseEntity.badRequest().body("Profile could not be created");
+        if (appUser.getUsername() == null || appUser.getEmail() == null || appUser.getPassword() == null) {
+            return ResponseEntity.badRequest().body("Missing information");
         }
+        try {
+            appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
+            AppUser newUser = userDao.createUser(appUser);
+            if (newUser == null) {
+                return ResponseEntity.badRequest().body("User could not be created");
+            }
+            profile.setUserId(newUser.getUserId());
+            Profile createdProfile = profileDao.createProfile(profile);
+            if (createdProfile == null) {
+                return ResponseEntity.badRequest().body("Profile could not be created");
+            }
+            final String token = jwtTokenUtil.generateToken(newUser);
+            return ResponseEntity.ok(new AuthResponse(newUser, token));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured while signing up " + e.getMessage());
+        }
+
+
     }
-
-    // Generate JWT token
-    final String token = jwtTokenUtil.generateToken(newUser);
-
-    // Return success response
-    return ResponseEntity.ok(new AuthResponse(newUser, token));
-}
-
 
 
     public static class AuthResponse {
-        private AppUser appUser;
+//        private AppUser appUser;
         private String token;
+        private int userId;
+        private String username;
+        private String role;
 
         public AuthResponse(AppUser user, String token) {
-            this.appUser = appUser;
+//            this.appUser = appUser;
             this.token = token;
+            this.userId = user.getUserId();
+            this.username = user.getUsername();
+//            this.role = user.getRoles().toString();
         }
 
         public String getToken() {
@@ -163,8 +114,33 @@ public ResponseEntity<?> signUp(@RequestBody SignupRequest signupRequest) {
         public void setToken(String token) {
             this.token = token;
         }
+
+        public int getUserId() {
+            return userId;
+        }
+
+        public void setUserId(int userId) {
+            this.userId = userId;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getRole() {
+            return role;
+        }
+
+        public void setRole(String role) {
+            this.role = role;
+        }
     }
 
 }
+
 
 
