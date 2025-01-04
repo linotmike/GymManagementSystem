@@ -138,4 +138,23 @@ public class Profile {
     public void setHealthCondition(String healthCondition) {
         this.healthCondition = healthCondition;
     }
+
+    @Override
+    public String toString() {
+        return "Profile{" +
+                "profileId=" + profileId +
+                ", userId=" + userId +
+                ", bio='" + bio + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", address='" + address + '\'' +
+                ", city='" + city + '\'' +
+                ", state='" + state + '\'' +
+                ", zip='" + zip + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                ", fitnessGoals='" + fitnessGoals + '\'' +
+                ", healthCondition='" + healthCondition + '\'' +
+                '}';
+    }
 }

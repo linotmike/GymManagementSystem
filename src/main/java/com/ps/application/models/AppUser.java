@@ -1,5 +1,7 @@
 package com.ps.application.models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,22 +15,15 @@ public class AppUser implements UserDetails {
     private String email;
     private String password;
 
-
+    @JsonProperty("role")
     private Roles roles;
 
     public AppUser() {
     }
-
-    public AppUser(int userId, String username, String email, String password, Roles roles) {
-        this.userId = userId;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.roles = roles;
-    }
     public enum Roles {
         Admin, Member, Guest;
 
+        @JsonCreator
         public static Roles getRole(String roleStr) {
             for (Roles role : Roles.values()) {
                 if (role.name().equalsIgnoreCase(roleStr)) {
@@ -38,6 +33,14 @@ public class AppUser implements UserDetails {
             throw new IllegalArgumentException("No constant with text " + roleStr + " found");
 
         }
+    }
+
+    public AppUser(int userId, String username, String email, String password, Roles roles) {
+        this.userId = userId;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.roles = roles;
     }
 
 
@@ -104,5 +107,16 @@ public class AppUser implements UserDetails {
 
     public void setRoles(Roles roles) {
         this.roles = roles;
+    }
+
+    @Override
+    public String toString() {
+        return "AppUser{" +
+                "userId=" + userId +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", roles=" + roles +
+                '}';
     }
 }

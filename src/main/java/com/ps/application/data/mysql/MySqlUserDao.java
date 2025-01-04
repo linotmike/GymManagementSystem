@@ -69,7 +69,7 @@ public class MySqlUserDao extends MySqlBaseDao implements UserDao {
             preparedStatement.setString(2, user.getEmail());
             preparedStatement.setString(3, user.getPassword());
 //            if(user.getRoles() != null){
-//            preparedStatement.setString(4, user.getRoles().toString());
+            preparedStatement.setString(4, user.getRoles().toString());
 //            } else {
 //                preparedStatement.setString(4,AppUser.Roles.Guest.toString());
 //                System.out.println("User role is not set");
@@ -104,7 +104,7 @@ public class MySqlUserDao extends MySqlBaseDao implements UserDao {
         String email = resultSet.getString("email");
         String password = resultSet.getString("password");
         String roleStr = resultSet.getString("role");
-        AppUser.Roles roles = null;
+        AppUser.Roles roles;
 //        AppUser.Roles roles = AppUser.Roles.getRole(resultSet.getString("role").toUpperCase());
         if(roleStr !=null && !roleStr.isEmpty()){
             try{

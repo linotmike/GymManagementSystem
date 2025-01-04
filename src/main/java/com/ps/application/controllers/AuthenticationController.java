@@ -64,11 +64,18 @@ public class AuthenticationController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@RequestBody SignupRequest signupRequest) {
+        System.out.println("Received signup request: " + signupRequest);
+        if (signupRequest.getUser() == null || signupRequest.getProfile() == null) {
+            return ResponseEntity.badRequest().body("Request structure is incorrect");
+        }
+
         AppUser appUser = signupRequest.getUser();
         Profile profile = signupRequest.getProfile();
 
-        if (appUser.getUsername() == null || appUser.getEmail() == null || appUser.getPassword() == null) {
+        if (appUser.getUsername() == null || appUser.getEmail() == null || appUser.getPassword() == null || appUser.getRoles() == null)  {
+            System.out.println("Missing info");
             return ResponseEntity.badRequest().body("Missing information");
+
         }
         try {
             appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
@@ -104,7 +111,7 @@ public class AuthenticationController {
             this.token = token;
             this.userId = user.getUserId();
             this.username = user.getUsername();
-//            this.role = user.getRoles().toString();
+            this.role = user.getRoles().toString();
         }
 
         public String getToken() {
