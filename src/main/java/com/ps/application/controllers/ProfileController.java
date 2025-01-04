@@ -2,16 +2,18 @@ package com.ps.application.controllers;
 
 import com.ps.application.data.ProfileDao;
 import com.ps.application.data.UserDao;
+import com.ps.application.models.AppUser;
 import com.ps.application.models.Profile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/profile")
+@PreAuthorize("hasRole('ROLE_Admin')or hasRole('ROLE_Member')")
 public class ProfileController {
     private ProfileDao profileDao;
     private UserDao userDao;
@@ -21,11 +23,17 @@ public class ProfileController {
         this.profileDao = profileDao;
         this.userDao = userDao;
     }
-//
-//    @PostMapping()
-//    ResponseEntity<?> createProfile (Profile profile){
-//
-//    }
+
+
+    @GetMapping()
+    public ResponseEntity<?> getProfileById(Principal principal){
+        String username = principal.getName();
+        AppUser user =  userDao.getByUsername(username);
+        int userId = user.getUserId();
+        Profile profile = profileDao.getUserById(userId);
+        return ResponseEntity.ok(profile);
+
+    }
 
 
 }

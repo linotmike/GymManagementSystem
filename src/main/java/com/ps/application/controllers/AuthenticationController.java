@@ -13,10 +13,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -47,16 +50,18 @@ public class AuthenticationController {
         try {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(appUser.getUsername(), appUser.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
-//            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 //            if(userDetails instanceof AppUser){
 //                ((AppUser) userDetails).setPassword(null);
 //            }
-//            String token = jwtTokenUtil.generateToken(userDetails);
+            String token = jwtTokenUtil.generateToken(userDetails);
+
+//            AuthResponse authResponse = new AuthResponse(userDetails.getUsername(), token)
 //            assert userDetails instanceof AppUser;
-            AppUser loggedInUser = (AppUser) authentication.getPrincipal();
-            loggedInUser.setPassword(null);
-            String token = jwtTokenUtil.generateToken(loggedInUser);
-            return ResponseEntity.ok(new AuthResponse(loggedInUser, token));
+//            AppUser loggedInUser = (AppUser) authentication.getPrincipal();
+//            loggedInUser.setPassword(null);
+//            String token = jwtTokenUtil.generateToken(loggedInUser);
+            return ResponseEntity.ok(new AuthResponse(userDetails.getUsername(), token, userDetails.getAuthorities()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("login failed: " + e.getMessage());
         }
@@ -72,7 +77,7 @@ public class AuthenticationController {
         AppUser appUser = signupRequest.getUser();
         Profile profile = signupRequest.getProfile();
 
-        if (appUser.getUsername() == null || appUser.getEmail() == null || appUser.getPassword() == null || appUser.getRoles() == null)  {
+        if (appUser.getUsername() == null || appUser.getEmail() == null || appUser.getPassword() == null || appUser.getRoles() == null) {
             System.out.println("Missing info");
             return ResponseEntity.badRequest().body("Missing information");
 
@@ -89,8 +94,8 @@ public class AuthenticationController {
                 return ResponseEntity.badRequest().body("Profile could not be created");
             }
             final String token = jwtTokenUtil.generateToken(newUser);
-            return ResponseEntity.ok(new AuthResponse(newUser, token));
-
+            return ResponseEntity.ok(new AuthResponse(newUser.getUsername(), token,newUser.getAuthorities()));
+//            return null;
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured while signing up " + e.getMessage());
         }
@@ -100,18 +105,20 @@ public class AuthenticationController {
 
 
     public static class AuthResponse {
-//        private AppUser appUser;
+        //        private AppUser appUser;
         private String token;
-        private int userId;
+        //        private int userId;
         private String username;
-        private String role;
+        //        private String role;
+        private Collection<? extends GrantedAuthority> authorities;
 
-        public AuthResponse(AppUser user, String token) {
+        public AuthResponse(String username, String token, Collection<? extends GrantedAuthority> authorities) {
 //            this.appUser = appUser;
+            this.username = username;
             this.token = token;
-            this.userId = user.getUserId();
-            this.username = user.getUsername();
-            this.role = user.getRoles().toString();
+//            this.userId = user.getUserId();
+//            this.role = user.getRoles().toString();
+            this.authorities = authorities;
         }
 
         public String getToken() {
@@ -122,13 +129,20 @@ public class AuthenticationController {
             this.token = token;
         }
 
-        public int getUserId() {
-            return userId;
+        public Collection<? extends GrantedAuthority> getAuthorities() {
+            return authorities;
         }
 
-        public void setUserId(int userId) {
-            this.userId = userId;
+        public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
+            this.authorities = authorities;
         }
+//        public int getUserId() {
+//            return userId;
+//        }
+//
+//        public void setUserId(int userId) {
+//            this.userId = userId;
+//        }
 
         public String getUsername() {
             return username;
@@ -138,13 +152,13 @@ public class AuthenticationController {
             this.username = username;
         }
 
-        public String getRole() {
-            return role;
-        }
-
-        public void setRole(String role) {
-            this.role = role;
-        }
+//        public String getRole() {
+//            return role;
+//        }
+//
+//        public void setRole(String role) {
+//            this.role = role;
+//        }
     }
 
 }
