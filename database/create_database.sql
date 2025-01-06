@@ -17,24 +17,46 @@ CREATE TABLE users
     role     ENUM('admin', 'member', 'guest') NOT NULL,
     PRIMARY KEY (user_id)
 );
+CREATE TABLE pilates_pricing (
+                                 pricing_id INT NOT NULL AUTO_INCREMENT,
+                                 description VARCHAR(255),
+                                 cost_for_members DECIMAL(10, 2),
+                                 cost_for_non_members DECIMAL(10, 2),
+                                 session_type ENUM('group', 'private'),
+                                 frequency_info VARCHAR(255),
+                                 PRIMARY KEY (pricing_id)
+);
+CREATE TABLE membership_types(
+    membership_type_id INT NOT NULL AUTO_INCREMENT,
+    type VARCHAR(50) NOT NULL,
+    price_per_month DECIMAL(10,2),
+    price_per_week DECIMAL(10,2),
+    classes_per_week INT,
+    PRIMARY KEY (membership_type_id)
+);
 
 CREATE TABLE members(
     member_id INT NOT NULL AUTO_INCREMENT,
     user_id INT NOT NULL,
-    membership_type ENUM ('basic','premium','vip') NOT NULL,
+    membership_type_id INT NOT NULL ,
+    pilates_pricing_id INT,
     start_date DATE NOT NULL,
     end_date DATE,
     status ENUM ('active','paused','expired') NOT NULL,
     PRIMARY KEY (member_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (membership_type_id) REFERENCES membership_types(membership_type_id),
+    FOREIGN KEY (pilates_pricing_id) REFERENCES pilates_pricing(pricing_id)
 );
 
 CREATE TABLE classes
 (
     class_id         INT          NOT NULL AUTO_INCREMENT,
     class_name       VARCHAR(50)  NOT NULL,
+    class_type ENUM('mat', 'reformer', 'prenatal', 'postpartum') NOT NULL,
     description      VARCHAR(255) NOT NULL,
     difficulty_level ENUM('beginner', 'intermediate', 'advanced'),
+    max_participants INT DEFAULT 0,
     PRIMARY KEY (class_id)
 
 
@@ -99,6 +121,7 @@ CREATE TABLE profiles
     PRIMARY KEY (profile_id),
     FOREIGN KEY (user_id) references users (user_id) ON DELETE CASCADE
 );
+
 CREATE TABLE categories
 (
     category_id INT NOT NULL AUTO_INCREMENT,
@@ -173,7 +196,7 @@ CREATE INDEX idx_day_of_week ON schedules (day_of_week);
 
 
 -- Insert data into `users`
--- Insert data into `users`
+
 INSERT INTO users (username, email, password, role)
 VALUES
     ('alice', 'alice@example.com', '$2a$10$NkufUPF3V8dEPSZeo1fzHe9ScBu.LOay9S3N32M84yuUM2OJYEJ/.', 'MEMBER'),
@@ -181,21 +204,35 @@ VALUES
     ('charlie', 'charlie@example.com', '$2a$10$NkufUPF3V8dEPSZeo1fzHe9ScBu.LOay9S3N32M84yuUM2OJYEJ/.', 'GUEST'),
     ('diana', 'diana@example.com', '$2a$10$lfQi9jSfhZZhfS6/Kyzv3u3418IgnWXWDQDk7IbcwlCFPgxg9Iud2', 'MEMBER');
 
--- Insert data into `members`
-INSERT INTO members (user_id, membership_type, start_date, status)
+-- Insert data into `pilates_pricing`
+INSERT INTO pilates_pricing (description, cost_for_members, cost_for_non_members, session_type, frequency_info)
 VALUES
-    (1, 'premium', '2023-01-01', 'active'),
-    (2, 'basic', '2023-01-02', 'active'),
-    (3, 'vip', '2023-01-03', 'paused'),
-    (4, 'basic', '2023-01-04', 'expired');
+    ('One Pilates class monthly for free', 0.00, 45.99, 'group', '1 class per month'),
+    ('Pilates Plus Gold', 400.00, 45.99, 'group', '2 classes per week'),
+    ('Pilates Premium', 340.00, 90.00, 'group', '3 classes per week');
+-- Insert data into `membership_types `
+    INSERT INTO membership_types ( type, price_per_month, price_per_week, classes_per_week)
+    VALUES
+        ('Basic', 100.00, 25.00, 2),
+        ('Premium', 340.00, 90.00, 12),
+        ('VIP', 500.00, 125.00, 20);
+-- Insert data into `members`
+INSERT INTO members (user_id, membership_type_id, pilates_pricing_id, start_date, end_date, status)
+VALUES
+    (1, 1, 1, '2023-01-01', NULL, 'active'),
+    (2, 2, 2, '2023-01-02', NULL, 'active'),
+    (3, 3, 3, '2023-01-03', NULL, 'paused'),
+    (4, 1, 1, '2023-01-04', '2023-06-04', 'expired');
+
+
 
 -- Insert data into `classes`
-INSERT INTO classes (class_name, description, difficulty_level)
+INSERT INTO classes (class_name, class_type, description, difficulty_level, max_participants)
 VALUES
-    ('Yoga', 'A relaxing class focused on stretching and mindfulness.', 'beginner'),
-    ('Spin', 'A high intensity bike class to get your heart racing.', 'advanced'),
-    ('Pilates', 'A class focused on strengthening the body with an emphasis on core strength.', 'intermediate'),
-    ('Zumba', 'A fun and energetic dance class to get you moving.', 'beginner');
+    ('Yoga', 'mat', 'A relaxing class focused on stretching and mindfulness.', 'beginner', 10),
+    ('Spin', 'reformer', 'A high intensity bike class to get your heart racing.', 'advanced', 8),
+    ('Prenatal Pilates', 'prenatal', 'Pilates class tailored for prenatal care.', 'intermediate', 5),
+    ('Postpartum Pilates', 'postpartum', 'Pilates class tailored for postpartum recovery.', 'intermediate', 5);
 
 -- Insert data into `instructors`
 INSERT INTO instructors (user_id, first_name, last_name, bio, specialty)

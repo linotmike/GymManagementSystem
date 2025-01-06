@@ -92,6 +92,34 @@ public class MySqlProfileDao extends MySqlBaseDao implements ProfileDao {
 
     @Override
     public Profile updateProfile(int profileId, Profile profile) {
-        return null;
+        String query = "UPDATE profiles SET bio = ?, image_url = ?, phone = ?, email = ?, address = ?, city = ?, state = ?, zip = ?, date_of_birth = ?, fitness_goals = ?, health_condition = ? WHERE profile_id = ?";
+        try (
+                Connection connection = getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ) {
+            preparedStatement.setString(1,profile.getBio());
+            preparedStatement.setString(2,profile.getImageUrl());
+            preparedStatement.setString(3,profile.getPhone());
+            preparedStatement.setString(4, profile.getEmail());
+            preparedStatement.setString(5, profile.getAddress());
+            preparedStatement.setString(6, profile.getCity());
+            preparedStatement.setString(7, profile.getState());
+            preparedStatement.setString(8, profile.getZip());
+            preparedStatement.setDate(9, java.sql.Date.valueOf(profile.getDateOfBirth()));
+            preparedStatement.setString(10, profile.getFitnessGoals());
+            preparedStatement.setString(11, profile.getHealthCondition());
+            preparedStatement.setInt(12, profileId);
+
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if(rowsUpdated > 0){
+                System.out.println("profile Updated " + rowsUpdated);
+            } else {
+                System.out.println("No profile updated");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error updating profile " + e.getMessage());
+            e.printStackTrace();
+        }
+        return profile;
     }
 }

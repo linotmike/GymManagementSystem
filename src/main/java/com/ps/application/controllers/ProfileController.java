@@ -35,5 +35,14 @@ public class ProfileController {
 
     }
 
+    @PutMapping("{profileId}")
+    public ResponseEntity<?> updateProfile (Principal principal, @RequestBody Profile profile){
+        String username = principal.getName();
+        AppUser user = userDao.getByUsername(username);
+        int userId = user.getUserId();
+        Profile newProfile = profileDao.updateProfile(userId,profile);
+        return ResponseEntity.ok(newProfile);
+    }
+
 
 }
