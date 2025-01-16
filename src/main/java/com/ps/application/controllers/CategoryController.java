@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
+import java.util.List;
 
 @PreAuthorize("hasRole('ROLE_Admin')or hasRole('ROLE_Member')")
 @RestController
@@ -29,12 +30,15 @@ public class CategoryController {
     }
 
     @GetMapping("{categoryId}")
-    public ResponseEntity<?> getCategoryBYId (Principal principal, @PathVariable int categoryId) {
-//        return categoryDao.getCategoryById(categoryId);
-//        String username = principal.getName();
-//        AppUser user = userDao.getByUsername(username);
-//        int userId = user.getUserId();
+    public ResponseEntity<?> getCategoryBYId ( @PathVariable int categoryId) {
         Category category = categoryDao.getCategoryById(categoryId);
         return ResponseEntity.ok(category);
+    }
+
+    @GetMapping()
+    public ResponseEntity<?>getAllCategories(){
+//        return categoryDao.getAllCategories();
+        List<Category> categories = categoryDao.getAllCategories();
+        return ResponseEntity.ok(categories);
     }
 }
