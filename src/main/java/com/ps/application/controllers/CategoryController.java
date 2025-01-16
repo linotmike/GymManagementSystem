@@ -7,10 +7,7 @@ import com.ps.application.models.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -40,5 +37,11 @@ public class CategoryController {
 //        return categoryDao.getAllCategories();
         List<Category> categories = categoryDao.getAllCategories();
         return ResponseEntity.ok(categories);
+    }
+
+    @PostMapping
+    public ResponseEntity<?> createCategory (@RequestBody Category category){
+        Category createdCategory = categoryDao.createCategories(category);
+        return ResponseEntity.ok(createdCategory);
     }
 }

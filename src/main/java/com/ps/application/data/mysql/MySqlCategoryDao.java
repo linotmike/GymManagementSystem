@@ -5,10 +5,7 @@ import com.ps.application.models.Category;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,8 +44,8 @@ public class MySqlCategoryDao extends MySqlBaseDao implements CategoryDao {
                 Connection connection = getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
                 ResultSet resultSet = preparedStatement.executeQuery();
-                ) {
-            while(resultSet.next()){
+        ) {
+            while (resultSet.next()) {
                 Category category = mapCategories(resultSet);
                 categories.add(category);
             }
@@ -60,6 +57,32 @@ public class MySqlCategoryDao extends MySqlBaseDao implements CategoryDao {
 
     @Override
     public Category createCategories(Category category) {
+        String query = "INSERT INTO categories (name,description) VALUES (?,?) ";
+        try (
+                Connection connection = getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        ) {
+            preparedStatement.setString(1, category.getName());
+            preparedStatement.setString(2, category.getDescription());
+
+            int rowsCreated = preparedStatement.executeUpdate();
+            if (rowsCreated > 0) {
+                System.out.println("Rows created " + 1);
+                try (
+                        ResultSet resultSet = preparedStatement.getGeneratedKeys()
+                ) {
+                    if (resultSet.next()) {
+                        category.setCategoryId(resultSet.getInt(1));
+                        return category;
+                    }
+                }
+            } else {
+                System.out.println("No rows created");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
