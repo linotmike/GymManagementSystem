@@ -92,13 +92,13 @@ public class MySqlCategoryDao extends MySqlBaseDao implements CategoryDao {
         try (
                 Connection connection = getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
-                ) {
-            preparedStatement.setString(1,category.getName());
-            preparedStatement.setString(2,category.getDescription());
-            preparedStatement.setInt(3,categoryId);
+        ) {
+            preparedStatement.setString(1, category.getName());
+            preparedStatement.setString(2, category.getDescription());
+            preparedStatement.setInt(3, categoryId);
 
             int rowsUpdated = preparedStatement.executeUpdate();
-            if(rowsUpdated > 0 ){
+            if (rowsUpdated > 0) {
                 System.out.println("Rows updated" + rowsUpdated);
             } else {
                 System.out.println("No rows updated");
@@ -111,6 +111,21 @@ public class MySqlCategoryDao extends MySqlBaseDao implements CategoryDao {
 
     @Override
     public Category deleteCategory(int categoryId) {
+        String query = "DELETE FROM categories WHERE category_id = ?";
+        try (
+                Connection connection = getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ) {
+            preparedStatement.setInt(1,categoryId);
+            int rowsDeleted = preparedStatement.executeUpdate();
+            if(rowsDeleted > 0){
+                System.out.println("Rows deleted " + rowsDeleted);
+            } else{
+                System.out.println("No rows deleted");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 

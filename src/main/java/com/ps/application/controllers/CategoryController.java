@@ -51,4 +51,9 @@ public class CategoryController {
         return ResponseEntity.ok(updatedCategory);
 
     }
+    @DeleteMapping("{categoryId}")
+    public ResponseEntity<?> deleteCategory (@PathVariable int categoryId){
+        Category deletedCategory = categoryDao.deleteCategory(categoryId);
+        return ResponseEntity.ok(deletedCategory);
+    }
 }
