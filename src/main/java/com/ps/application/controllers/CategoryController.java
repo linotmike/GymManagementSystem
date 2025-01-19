@@ -44,4 +44,11 @@ public class CategoryController {
         Category createdCategory = categoryDao.createCategories(category);
         return ResponseEntity.ok(createdCategory);
     }
+
+    @PutMapping("{categoryId}")
+    public ResponseEntity<?> updateCategory (@PathVariable int categoryId, @RequestBody Category category){
+        Category updatedCategory = categoryDao.updateCategory(categoryId,category);
+        return ResponseEntity.ok(updatedCategory);
+
+    }
 }
