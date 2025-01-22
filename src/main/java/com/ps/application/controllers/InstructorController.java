@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/instructors")
 //@PreAuthorize("hasRole('ROLE_Admin')or hasRole('ROLE_Instructor')")
@@ -25,6 +27,12 @@ public class InstructorController {
     @GetMapping("{instructorId}")
     public ResponseEntity<?> getInstructorById(@PathVariable int instructorId){
         Instructors instructors = instructorDao.getInstructorById(instructorId);
+        return ResponseEntity.ok(instructors);
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getAllInstructors(){
+        List<Instructors>instructors = instructorDao.getAllInstructors();
         return ResponseEntity.ok(instructors);
     }
 }

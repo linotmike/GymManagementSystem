@@ -2,6 +2,7 @@ package com.ps.application.data.mysql;
 
 import com.ps.application.data.InstructorDao;
 import com.ps.application.models.Instructors;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -9,6 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -19,7 +21,21 @@ public class MySqlInstructorDao extends MySqlBaseDao implements InstructorDao {
 
     @Override
     public List<Instructors> getAllInstructors() {
-        return List.of();
+        List<Instructors> instructors = new ArrayList<>();
+        String query = "SELECT * FROM instructors";
+        try (
+                Connection connection = getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                ) {
+            while(resultSet.next()){
+                Instructors instructor = mapInstructors(resultSet);
+                instructors.add(instructor);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return instructors;
     }
 
     @Override
@@ -29,19 +45,19 @@ public class MySqlInstructorDao extends MySqlBaseDao implements InstructorDao {
                 Connection connection = getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
         ) {
-            preparedStatement.setInt(1,instructorId);
+            preparedStatement.setInt(1, instructorId);
             try (
                     ResultSet resultSet = preparedStatement.executeQuery();
             ) {
-                if(resultSet.next()){
-                  return  mapInstructors(resultSet);
+                if (resultSet.next()) {
+                    return mapInstructors(resultSet);
 
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null ;
+        return null;
     }
 
     @Override
@@ -59,7 +75,7 @@ public class MySqlInstructorDao extends MySqlBaseDao implements InstructorDao {
         return null;
     }
 
-    public Instructors mapInstructors (ResultSet resultSet) throws SQLException {
+    public Instructors mapInstructors(ResultSet resultSet) throws SQLException {
         int instructorId = resultSet.getInt("instructor_id");
         int userId = resultSet.getInt("user_id");
         String firstName = resultSet.getString("first_name");
@@ -67,6 +83,6 @@ public class MySqlInstructorDao extends MySqlBaseDao implements InstructorDao {
         String bio = resultSet.getString("bio");
         String specialty = resultSet.getString("specialty");
 
-        return new Instructors(instructorId,userId,firstName,lastName,bio,specialty);
+        return new Instructors(instructorId, userId, firstName, lastName, bio, specialty);
     }
 }
