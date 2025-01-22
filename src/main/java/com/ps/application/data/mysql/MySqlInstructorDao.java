@@ -6,10 +6,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +24,8 @@ public class MySqlInstructorDao extends MySqlBaseDao implements InstructorDao {
                 Connection connection = getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
                 ResultSet resultSet = preparedStatement.executeQuery();
-                ) {
-            while(resultSet.next()){
+        ) {
+            while (resultSet.next()) {
                 Instructors instructor = mapInstructors(resultSet);
                 instructors.add(instructor);
             }
@@ -62,6 +59,34 @@ public class MySqlInstructorDao extends MySqlBaseDao implements InstructorDao {
 
     @Override
     public Instructors createInstructors(Instructors instructors) {
+        String query = "INSERT INTO instructors (user_id,first_name,last_name,bio,specialty) VALUES (?,?,?,?,?)";
+        try (
+                Connection connection = getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+                ) {
+            preparedStatement.setInt(1,instructors.getUserId());
+            preparedStatement.setString(2,instructors.getFirstName());
+            preparedStatement.setString(3,instructors.getLastName());
+            preparedStatement.setString(4,instructors.getBio());
+            preparedStatement.setString(5,instructors.getSpecialty());
+
+            int rowsCreated  = preparedStatement.executeUpdate();
+            if(rowsCreated > 0){
+                System.out.println("Rows created " + rowsCreated);
+                try(
+                        ResultSet resultSet = preparedStatement.getGeneratedKeys()
+                        ){
+                    if(resultSet.next()){
+                        instructors.setInstructorId(resultSet.getInt(1));
+                        return instructors;
+                    }
+                }
+            } else {
+                System.out.println("No rows created");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
