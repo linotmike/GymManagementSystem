@@ -5,6 +5,10 @@ import com.ps.application.models.Instructors;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 @Component
@@ -36,5 +40,16 @@ public class MySqlInstructorDao extends MySqlBaseDao implements InstructorDao {
     @Override
     public Instructors deleteInstructors(int instructorId) {
         return null;
+    }
+
+    public Instructors mapInstructors (ResultSet resultSet) throws SQLException {
+        int instructorId = resultSet.getInt("instructor_id");
+        int userId = resultSet.getInt("user_id");
+        String firstName = resultSet.getString("first_name");
+        String lastName = resultSet.getString("last_name");
+        String bio = resultSet.getString("bio");
+        String specialty = resultSet.getString("specialty");
+
+        return new Instructors(instructorId,userId,firstName,lastName,bio,specialty);
     }
 }
