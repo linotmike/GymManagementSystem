@@ -24,7 +24,24 @@ public class MySqlInstructorDao extends MySqlBaseDao implements InstructorDao {
 
     @Override
     public Instructors getInstructorById(int instructorId) {
-        return null;
+        String query = "SELECT * FROM instructors WHERE instructor_id = ?";
+        try (
+                Connection connection = getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+        ) {
+            preparedStatement.setInt(1,instructorId);
+            try (
+                    ResultSet resultSet = preparedStatement.executeQuery();
+            ) {
+                if(resultSet.next()){
+                  return  mapInstructors(resultSet);
+
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null ;
     }
 
     @Override
