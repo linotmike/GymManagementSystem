@@ -193,6 +193,8 @@ CREATE TABLE order_items
     FOREIGN KEY (product_id) REFERENCES products (product_id)
 );
 CREATE INDEX idx_day_of_week ON schedules (day_of_week);
+ALTER TABLE instructors
+    ADD CONSTRAINT unique_user_id UNIQUE (user_id);
 
 
 -- Insert data into `users`
