@@ -51,4 +51,11 @@ public ResponseEntity<?> createInstructors(@RequestBody Instructors instructors)
     }
 }
 
+@PutMapping("{instructorId}")
+    public ResponseEntity<?> updateInstructors(@PathVariable int instructorId, @RequestBody Instructors instructors){
+        Instructors updatedInstructor = instructorDao.updateInstructors(instructorId,instructors);
+
+        return ResponseEntity.ok(updatedInstructor);
+}
+
 }

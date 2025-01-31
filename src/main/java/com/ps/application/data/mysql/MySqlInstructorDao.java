@@ -63,20 +63,20 @@ public class MySqlInstructorDao extends MySqlBaseDao implements InstructorDao {
         try (
                 Connection connection = getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-                ) {
-            preparedStatement.setInt(1,instructors.getUserId());
-            preparedStatement.setString(2,instructors.getFirstName());
-            preparedStatement.setString(3,instructors.getLastName());
-            preparedStatement.setString(4,instructors.getBio());
-            preparedStatement.setString(5,instructors.getSpecialty());
+        ) {
+            preparedStatement.setInt(1, instructors.getUserId());
+            preparedStatement.setString(2, instructors.getFirstName());
+            preparedStatement.setString(3, instructors.getLastName());
+            preparedStatement.setString(4, instructors.getBio());
+            preparedStatement.setString(5, instructors.getSpecialty());
 
-            int rowsCreated  = preparedStatement.executeUpdate();
-            if(rowsCreated > 0){
+            int rowsCreated = preparedStatement.executeUpdate();
+            if (rowsCreated > 0) {
                 System.out.println("Rows created " + rowsCreated);
-                try(
+                try (
                         ResultSet resultSet = preparedStatement.getGeneratedKeys()
-                        ){
-                    if(resultSet.next()){
+                ) {
+                    if (resultSet.next()) {
                         instructors.setInstructorId(resultSet.getInt(1));
                         return instructors;
                     }
@@ -92,7 +92,28 @@ public class MySqlInstructorDao extends MySqlBaseDao implements InstructorDao {
 
     @Override
     public Instructors updateInstructors(int instructorId, Instructors instructors) {
-        return null;
+        String query = "UPDATE instructors SET first_name = ?, last_name = ?, bio = ?, specialty = ? WHERE instructor_id = ?";
+        try (
+                Connection connection = getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+        ) {
+
+            preparedStatement.setString(1, instructors.getFirstName());
+            preparedStatement.setString(2, instructors.getLastName());
+            preparedStatement.setString(3, instructors.getBio());
+            preparedStatement.setString(4, instructors.getSpecialty());
+            preparedStatement.setInt(5, instructorId);
+
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("Rows updated " + 0);
+            } else {
+                System.out.println("No rows updated");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return instructors;
     }
 
     @Override
