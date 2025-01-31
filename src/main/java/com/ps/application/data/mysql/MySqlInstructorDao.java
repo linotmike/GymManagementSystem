@@ -106,7 +106,7 @@ public class MySqlInstructorDao extends MySqlBaseDao implements InstructorDao {
 
             int rowsUpdated = preparedStatement.executeUpdate();
             if (rowsUpdated > 0) {
-                System.out.println("Rows updated " + 0);
+                System.out.println("Rows updated " + 1);
             } else {
                 System.out.println("No rows updated");
             }
@@ -118,6 +118,21 @@ public class MySqlInstructorDao extends MySqlBaseDao implements InstructorDao {
 
     @Override
     public Instructors deleteInstructors(int instructorId) {
+        String query = "DELETE FROM instructors WHERE instructor_id = ?";
+        try (
+                Connection connection = getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query)
+                ) {
+            preparedStatement.setInt(1,instructorId);
+            int rowsDeleted  = preparedStatement.executeUpdate();
+            if(rowsDeleted > 0){
+                System.out.println("Rows deleted " + 1);
+            } else {
+                System.out.println("No rows deleted");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 

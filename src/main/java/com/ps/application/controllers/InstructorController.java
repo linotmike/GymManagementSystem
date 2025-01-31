@@ -58,4 +58,11 @@ public ResponseEntity<?> createInstructors(@RequestBody Instructors instructors)
         return ResponseEntity.ok(updatedInstructor);
 }
 
+@DeleteMapping("{instructorId}")
+    public ResponseEntity<?> deleteInstructor (@PathVariable int instructorId){
+        Instructors instructors = instructorDao.deleteInstructors(instructorId);
+
+        return ResponseEntity.ok(instructors);
+}
+
 }
