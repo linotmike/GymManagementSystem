@@ -4,12 +4,12 @@ public class Class {
 
     private int classId;
     private String name;
-    private ClassType type;
+    private Type type;
     private String description;
     private DifficultyLevel difficultyLevel;
     private int maxParticipants;
 
-    public enum ClassType {
+    public enum Type {
         MAT,REFORMER,PRENATAL,POSTPARTUM
     }
     public enum DifficultyLevel{
@@ -18,7 +18,7 @@ public class Class {
     public Class(){}
 
 
-    public Class(int classId, String name, ClassType type, String description, DifficultyLevel difficultyLevel, int maxParticipants) {
+    public Class(int classId, String name, Type type, String description, DifficultyLevel difficultyLevel, int maxParticipants) {
         this.classId = classId;
         this.name = name;
         this.type = type;
@@ -39,11 +39,11 @@ public class Class {
         this.name = name;
     }
 
-    public ClassType getType() {
+    public Type getType() {
         return type;
     }
 
-    public void setType(ClassType type) {
+    public void setType(Type type) {
         this.type = type;
     }
 
