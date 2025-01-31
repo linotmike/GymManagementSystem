@@ -52,8 +52,8 @@ CREATE TABLE members(
 CREATE TABLE classes
 (
     class_id         INT          NOT NULL AUTO_INCREMENT,
-    class_name       VARCHAR(50)  NOT NULL,
-    class_type ENUM('mat', 'reformer', 'prenatal', 'postpartum') NOT NULL,
+    name       VARCHAR(50)  NOT NULL,
+    type ENUM('mat', 'reformer', 'prenatal', 'postpartum') NOT NULL,
     description      VARCHAR(255) NOT NULL,
     difficulty_level ENUM('beginner', 'intermediate', 'advanced'),
     max_participants INT DEFAULT 0,
