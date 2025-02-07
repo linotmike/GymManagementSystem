@@ -1,9 +1,12 @@
 package com.ps.application.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Class {
 
     private int classId;
     private String name;
+    @JsonProperty("type")
     private Type type;
     private String description;
     private DifficultyLevel difficultyLevel;

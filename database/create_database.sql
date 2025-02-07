@@ -229,7 +229,7 @@ VALUES
 
 
 -- Insert data into `classes`
-INSERT INTO classes (class_name, class_type, description, difficulty_level, max_participants)
+INSERT INTO classes (name, type, description, difficulty_level, max_participants)
 VALUES
     ('Yoga', 'mat', 'A relaxing class focused on stretching and mindfulness.', 'beginner', 10),
     ('Spin', 'reformer', 'A high intensity bike class to get your heart racing.', 'advanced', 8),
