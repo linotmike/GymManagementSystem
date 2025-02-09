@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -42,7 +43,21 @@ public class MySqlMemberDao extends MySqlBaseDao implements MemberDao {
 
     @Override
     public List<Member> getAllMembers() {
-        return List.of();
+        String query = "SELECT * FROM members";
+        List<Member> members = new ArrayList<>();
+        try (
+                Connection connection = getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ResultSet resultSet = preparedStatement.executeQuery()
+                ) {
+            while (resultSet.next()){
+                Member member = mapMember(resultSet);
+                members.add(member);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return members;
     }
 
     @Override
@@ -68,12 +83,12 @@ public class MySqlMemberDao extends MySqlBaseDao implements MemberDao {
 //        LocalDate startDate = resultSet.getDate("")
         LocalDate startDate = null;
         java.sql.Date dateStart = resultSet.getDate("start_date");
-        if(dateStart != null){
+        if (dateStart != null) {
             startDate = dateStart.toLocalDate();
         }
         LocalDate endDate = null;
         java.sql.Date dateEnd = resultSet.getDate("end_date");
-        if(dateEnd != null){
+        if (dateEnd != null) {
             endDate = dateEnd.toLocalDate();
         }
 //        LocalDate startDate = resultSet.getDate("start_date").toLocalDate();
@@ -87,7 +102,7 @@ public class MySqlMemberDao extends MySqlBaseDao implements MemberDao {
                 e.printStackTrace();
             }
         }
-        return new Member(memberId,userId,membershipTypeId,pilatesPricingId,startDate,endDate,memStatus);
+        return new Member(memberId, userId, membershipTypeId, pilatesPricingId, startDate, endDate, memStatus);
 
     }
 }

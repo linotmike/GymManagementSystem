@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.PublicKey;
+import java.util.List;
+
 @RestController
 @CrossOrigin
 @RequestMapping("api/members")
@@ -20,6 +23,12 @@ public class MemberController {
     @GetMapping("{memberId}")
     public ResponseEntity<?>getMembersById(@PathVariable int memberId){
         Member member = memberDao.getMemberById(memberId);
+        return ResponseEntity.ok(member);
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getAllMembers(){
+        List<Member> member = memberDao.getAllMembers();
         return ResponseEntity.ok(member);
     }
 }
