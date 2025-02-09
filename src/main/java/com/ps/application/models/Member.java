@@ -1,5 +1,7 @@
 package com.ps.application.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDate;
 
 public class Member {
@@ -9,6 +11,7 @@ public class Member {
     private int pilatesPricingId;
     private LocalDate startDate;
     private LocalDate endDate;
+    @JsonProperty("status")
     private Status status;
 
     public enum Status {
